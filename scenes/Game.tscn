@@ -1,0 +1,258 @@
+[gd_scene load_steps=15 format=3 uid="uid://game_scene"]
+
+[ext_resource type="Script" path="res://scripts/Game.gd" id="1_game"]
+[ext_resource type="FontFile" path="res://assets/fonts/Vazir.ttf" id="2_font"]
+[ext_resource type="Script" path="res://scripts/UIAnimations.gd" id="3_ui_anim"]
+[ext_resource type="PackedScene" path="res://scenes/components/LetterCircle.tscn" id="4_letter_circle"]
+[ext_resource type="PackedScene" path="res://scenes/components/WordGrid.tscn" id="5_word_grid"]
+
+[sub_resource type="Shader" id="Shader_game_bg"]
+code = "shader_type canvas_item;
+
+uniform vec4 color1 : source_color = vec4(0.08, 0.1, 0.2, 1.0);
+uniform vec4 color2 : source_color = vec4(0.15, 0.08, 0.18, 1.0);
+uniform float time : hint_range(0.0, 1000.0) = 0.0;
+
+void fragment() {
+	vec2 uv = UV;
+	float gradient = uv.y;
+	
+	// موج خفیف
+	gradient += sin(uv.x * 3.0 + time * 0.2) * 0.03;
+	
+	COLOR = mix(color1, color2, gradient);
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_game_bg"]
+shader = SubResource("Shader_game_bg")
+shader_parameter/color1 = Color(0.06, 0.08, 0.18, 1)
+shader_parameter/color2 = Color(0.12, 0.06, 0.15, 1)
+shader_parameter/time = 0.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_level"]
+font = ExtResource("2_font")
+font_size = 28
+font_color = Color(0.9, 0.9, 0.95, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_timer"]
+font = ExtResource("2_font")
+font_size = 36
+font_color = Color(1, 1, 1, 1)
+outline_size = 2
+outline_color = Color(0.1, 0.1, 0.2, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_score"]
+font = ExtResource("2_font")
+font_size = 24
+font_color = Color(1, 0.9, 0.4, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_current_word"]
+font = ExtResource("2_font")
+font_size = 42
+font_color = Color(1, 1, 1, 1)
+outline_size = 3
+outline_color = Color(0.2, 0.1, 0.3, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_top_panel"]
+bg_color = Color(0, 0, 0, 0.4)
+corner_radius_bottom_left = 20
+corner_radius_bottom_right = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_hint_button"]
+bg_color = Color(0.3, 0.3, 0.5, 0.8)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.5, 0.5, 0.7, 0.8)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_word_display"]
+bg_color = Color(0.1, 0.1, 0.15, 0.8)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+
+[node name="Game" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_game")
+
+[node name="UIAnimations" type="Node" parent="."]
+script = ExtResource("3_ui_anim")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+material = SubResource("ShaderMaterial_game_bg")
+
+[node name="TopBar" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 100.0
+theme_override_styles/panel = SubResource("StyleBox_top_panel")
+
+[node name="MarginContainer" type="MarginContainer" parent="TopBar"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 15
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TopBar/MarginContainer"]
+layout_mode = 2
+
+[node name="BackButton" type="Button" parent="TopBar/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+text = "←"
+
+[node name="LevelLabel" type="Label" parent="TopBar/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "مرحله 1"
+label_settings = SubResource("LabelSettings_level")
+
+[node name="Spacer" type="Control" parent="TopBar/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TimerContainer" type="HBoxContainer" parent="TopBar/MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="TimerIcon" type="Label" parent="TopBar/MarginContainer/HBoxContainer/TimerContainer"]
+layout_mode = 2
+text = "⏱️"
+
+[node name="TimerLabel" type="Label" parent="TopBar/MarginContainer/HBoxContainer/TimerContainer"]
+layout_mode = 2
+text = "3:00"
+label_settings = SubResource("LabelSettings_timer")
+
+[node name="Spacer2" type="Control" parent="TopBar/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ScoreContainer" type="HBoxContainer" parent="TopBar/MarginContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CoinIcon" type="Label" parent="TopBar/MarginContainer/HBoxContainer/ScoreContainer"]
+layout_mode = 2
+text = "🪙"
+
+[node name="CoinLabel" type="Label" parent="TopBar/MarginContainer/HBoxContainer/ScoreContainer"]
+layout_mode = 2
+text = "500"
+label_settings = SubResource("LabelSettings_score")
+
+[node name="GameContent" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 110.0
+offset_bottom = -20.0
+theme_override_constants/separation = 15
+
+[node name="WordGridContainer" type="CenterContainer" parent="GameContent"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="WordGrid" parent="GameContent/WordGridContainer" instance=ExtResource("5_word_grid")]
+layout_mode = 2
+
+[node name="CurrentWordContainer" type="CenterContainer" parent="GameContent"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+
+[node name="CurrentWordPanel" type="PanelContainer" parent="GameContent/CurrentWordContainer"]
+custom_minimum_size = Vector2(300, 60)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBox_word_display")
+
+[node name="CurrentWordLabel" type="Label" parent="GameContent/CurrentWordContainer/CurrentWordPanel"]
+layout_mode = 2
+text = ""
+label_settings = SubResource("LabelSettings_current_word")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LetterCircleContainer" type="CenterContainer" parent="GameContent"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LetterCircle" parent="GameContent/LetterCircleContainer" instance=ExtResource("4_letter_circle")]
+layout_mode = 2
+
+[node name="HintsContainer" type="HBoxContainer" parent="GameContent"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 15
+
+[node name="HintLetterButton" type="Button" parent="GameContent/HintsContainer"]
+custom_minimum_size = Vector2(70, 70)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBox_hint_button")
+text = "💡
+50"
+
+[node name="HintWordButton" type="Button" parent="GameContent/HintsContainer"]
+custom_minimum_size = Vector2(70, 70)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBox_hint_button")
+text = "📖
+150"
+
+[node name="ShuffleButton" type="Button" parent="GameContent/HintsContainer"]
+custom_minimum_size = Vector2(70, 70)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBox_hint_button")
+text = "🔀
+30"
+
+[node name="BombButton" type="Button" parent="GameContent/HintsContainer"]
+custom_minimum_size = Vector2(70, 70)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBox_hint_button")
+text = "💣
+100"
+
+[node name="BonusWordsContainer" type="HBoxContainer" parent="GameContent"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="BonusLabel" type="Label" parent="GameContent/BonusWordsContainer"]
+layout_mode = 2
+text = "کلمات جایزه: "
+label_settings = SubResource("LabelSettings_level")
+
+[node name="BonusCount" type="Label" parent="GameContent/BonusWordsContainer"]
+layout_mode = 2
+text = "0/3"
+label_settings = SubResource("LabelSettings_score")
+
+[node name="ConnectionLines" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="ParticleContainer" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="LevelComplete
