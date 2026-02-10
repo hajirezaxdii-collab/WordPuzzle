@@ -1,0 +1,74 @@
+[gd_scene load_steps=5 format=3 uid="uid://letter_circle"]
+
+[ext_resource type="Script" path="res://scripts/LetterCircle.gd" id="1_script"]
+[ext_resource type="FontFile" path="res://assets/fonts/Vazir.ttf" id="2_font"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_letter_normal"]
+bg_color = Color(0.2, 0.25, 0.4, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.4, 0.5, 0.7, 1)
+corner_radius_top_left = 35
+corner_radius_top_right = 35
+corner_radius_bottom_right = 35
+corner_radius_bottom_left = 35
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 5
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_letter_selected"]
+bg_color = Color(0.3, 0.6, 0.9, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.5, 0.8, 1, 1)
+corner_radius_top_left = 35
+corner_radius_top_right = 35
+corner_radius_bottom_right = 35
+corner_radius_bottom_left = 35
+shadow_color = Color(0.2, 0.5, 0.8, 0.5)
+shadow_size = 10
+shadow_offset = Vector2(0, 0)
+
+[sub_resource type="LabelSettings" id="LabelSettings_letter"]
+font = ExtResource("2_font")
+font_size = 42
+font_color = Color(1, 1, 1, 1)
+shadow_size = 2
+shadow_color = Color(0, 0, 0, 0.4)
+shadow_offset = Vector2(1, 2)
+
+[node name="LetterCircle" type="Control"]
+custom_minimum_size = Vector2(320, 320)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource("1_script")
+
+[node name="CircleBackground" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -150.0
+offset_right = 150.0
+offset_bottom = 150.0
+
+[node name="LettersContainer" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="ConnectionLine" type="Line2D" parent="."]
+width = 8.0
+default_color = Color(0.4, 0.7, 1, 0.8)
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
