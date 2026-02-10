@@ -1,0 +1,521 @@
+[gd_scene load_steps=12 format=3 uid="uid://main_scene"]
+
+[ext_resource type="Script" path="res://scripts/Main.gd" id="1_main"]
+[ext_resource type="FontFile" path="res://assets/fonts/Vazir.ttf" id="2_font"]
+[ext_resource type="Script" path="res://scripts/UIAnimations.gd" id="3_ui_anim"]
+
+[sub_resource type="Shader" id="Shader_gradient_bg"]
+code = "shader_type canvas_item;
+
+uniform vec4 color_top : source_color = vec4(0.1, 0.15, 0.3, 1.0);
+uniform vec4 color_bottom : source_color = vec4(0.2, 0.1, 0.25, 1.0);
+uniform float time : hint_range(0.0, 1000.0) = 0.0;
+
+void fragment() {
+	vec2 uv = UV;
+	
+	// گرادیانت عمودی
+	vec4 gradient = mix(color_top, color_bottom, uv.y);
+	
+	// افکت موج خفیف
+	float wave = sin(uv.x * 5.0 + time * 0.5) * 0.02;
+	gradient = mix(gradient, color_top, wave + 0.02);
+	
+	COLOR = gradient;
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bg"]
+shader = SubResource("Shader_gradient_bg")
+shader_parameter/color_top = Color(0.1, 0.12, 0.25, 1)
+shader_parameter/color_bottom = Color(0.18, 0.08, 0.22, 1)
+shader_parameter/time = 0.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_title"]
+font = ExtResource("2_font")
+font_size = 64
+font_color = Color(1, 1, 1, 1)
+outline_size = 3
+outline_color = Color(0.2, 0.1, 0.3, 1)
+shadow_size = 5
+shadow_color = Color(0, 0, 0, 0.4)
+shadow_offset = Vector2(3, 4)
+
+[sub_resource type="LabelSettings" id="LabelSettings_button"]
+font = ExtResource("2_font")
+font_size = 32
+font_color = Color(1, 1, 1, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_small"]
+font = ExtResource("2_font")
+font_size = 24
+font_color = Color(0.9, 0.9, 0.95, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_currency"]
+font = ExtResource("2_font")
+font_size = 26
+font_color = Color(1, 0.9, 0.4, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_button_normal"]
+bg_color = Color(0.3, 0.5, 0.9, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.4, 0.6, 1, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 5
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_button_hover"]
+bg_color = Color(0.4, 0.6, 1, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.5, 0.7, 1, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0, 0, 0, 0.4)
+shadow_size = 8
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_button_pressed"]
+bg_color = Color(0.25, 0.4, 0.8, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.35, 0.5, 0.9, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_size = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_panel"]
+bg_color = Color(0, 0, 0, 0.3)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_secondary_button"]
+bg_color = Color(0.6, 0.3, 0.7, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.7, 0.4, 0.8, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
+
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_main")
+
+[node name="UIAnimations" type="Node" parent="."]
+script = ExtResource("3_ui_anim")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+material = SubResource("ShaderMaterial_bg")
+
+[node name="ParallaxBG" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Layer1" type="TextureRect" parent="ParallaxBG"]
+modulate = Color(1, 1, 1, 0.1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Layer2" type="TextureRect" parent="ParallaxBG"]
+modulate = Color(1, 1, 1, 0.15)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="TopBar" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 80.0
+theme_override_styles/panel = SubResource("StyleBox_panel")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TopBar"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="ProfileButton" type="Button" parent="TopBar/HBoxContainer"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBox_panel")
+text = "👤"
+
+[node name="LevelBadge" type="PanelContainer" parent="TopBar/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBox_panel")
+
+[node name="LevelLabel" type="Label" parent="TopBar/HBoxContainer/LevelBadge"]
+layout_mode = 2
+text = "سطح 1"
+label_settings = SubResource("LabelSettings_small")
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="TopBar/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DiamondContainer" type="HBoxContainer" parent="TopBar/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="DiamondIcon" type="Label" parent="TopBar/HBoxContainer/DiamondContainer"]
+layout_mode = 2
+text = "💎"
+label_settings = SubResource("LabelSettings_small")
+
+[node name="DiamondCount" type="Label" parent="TopBar/HBoxContainer/DiamondContainer"]
+layout_mode = 2
+text = "10"
+label_settings = SubResource("LabelSettings_currency")
+
+[node name="CoinContainer" type="HBoxContainer" parent="TopBar/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CoinIcon" type="Label" parent="TopBar/HBoxContainer/CoinContainer"]
+layout_mode = 2
+text = "🪙"
+label_settings = SubResource("LabelSettings_small")
+
+[node name="CoinCount" type="Label" parent="TopBar/HBoxContainer/CoinContainer"]
+layout_mode = 2
+text = "500"
+label_settings = SubResource("LabelSettings_currency")
+
+[node name="AddCoinButton" type="Button" parent="TopBar/HBoxContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBox_secondary_button")
+text = "+"
+
+[node name="SettingsButton" type="Button" parent="TopBar/HBoxContainer"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBox_panel")
+text = "⚙️"
+
+[node name="MainContent" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = 100.0
+offset_right = -40.0
+offset_bottom = -40.0
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="LogoContainer" type="CenterContainer" parent="MainContent"]
+layout_mode = 2
+
+[node name="Logo" type="TextureRect" parent="MainContent/LogoContainer"]
+custom_minimum_size = Vector2(180, 180)
+layout_mode = 2
+
+[node name="TitleContainer" type="VBoxContainer" parent="MainContent"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="Title" type="Label" parent="MainContent/TitleContainer"]
+layout_mode = 2
+text = "پازل کلمات"
+label_settings = SubResource("LabelSettings_title")
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="MainContent/TitleContainer"]
+layout_mode = 2
+text = "سفر در دنیای کلمات فارسی"
+label_settings = SubResource("LabelSettings_small")
+horizontal_alignment = 1
+
+[node name="Spacer1" type="Control" parent="MainContent"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="ButtonsContainer" type="VBoxContainer" parent="MainContent"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 15
+
+[node name="PlayButton" type="Button" parent="MainContent/ButtonsContainer"]
+custom_minimum_size = Vector2(300, 70)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/normal = SubResource("StyleBox_button_normal")
+theme_override_styles/hover = SubResource("StyleBox_button_hover")
+theme_override_styles/pressed = SubResource("StyleBox_button_pressed")
+text = "🎮  شروع بازی"
+
+[node name="LevelsButton" type="Button" parent="MainContent/ButtonsContainer"]
+custom_minimum_size = Vector2(300, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/normal = SubResource("StyleBox_secondary_button")
+text = "📋  انتخاب مرحله"
+
+[node name="DailyChallengeButton" type="Button" parent="MainContent/ButtonsContainer"]
+custom_minimum_size = Vector2(300, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/normal = SubResource("StyleBox_secondary_button")
+text = "🏆  چالش روزانه"
+
+[node name="Spacer2" type="Control" parent="MainContent"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BottomButtons" type="HBoxContainer" parent="MainContent"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 20
+
+[node name="ShopButton" type="Button" parent="MainContent/BottomButtons"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBox_panel")
+text = "🛒"
+
+[node name="DailyRewardButton" type="Button" parent="MainContent/BottomButtons"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBox_panel")
+text = "🎁"
+
+[node name="AchievementsButton" type="Button" parent="MainContent/BottomButtons"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBox_panel")
+text = "🏅"
+
+[node name="StatsButton" type="Button" parent="MainContent/BottomButtons"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBox_panel")
+text = "📊"
+
+[node name="EnergyBar" type="HBoxContainer" parent="MainContent"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 10
+
+[node name="EnergyIcon" type="Label" parent="MainContent/EnergyBar"]
+layout_mode = 2
+text = "⚡"
+label_settings = SubResource("LabelSettings_small")
+
+[node name="EnergyProgress" type="ProgressBar" parent="MainContent/EnergyBar"]
+custom_minimum_size = Vector2(200, 25)
+layout_mode = 2
+max_value = 30.0
+value = 30.0
+show_percentage = false
+
+[node name="EnergyLabel" type="Label" parent="MainContent/EnergyBar"]
+layout_mode = 2
+text = "30/30"
+label_settings = SubResource("LabelSettings_small")
+
+[node name="EnergyTimer" type="Label" parent="MainContent/EnergyBar"]
+layout_mode = 2
+text = ""
+label_settings = SubResource("LabelSettings_small")
+
+[node name="DailyRewardPopup" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Overlay" type="ColorRect" parent="DailyRewardPopup"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.7)
+
+[node name="PopupPanel" type="PanelContainer" parent="DailyRewardPopup"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -250.0
+offset_right = 200.0
+offset_bottom = 250.0
+theme_override_styles/panel = SubResource("StyleBox_panel")
+
+[node name="Content" type="VBoxContainer" parent="DailyRewardPopup/PopupPanel"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Title" type="Label" parent="DailyRewardPopup/PopupPanel/Content"]
+layout_mode = 2
+text = "🎁 جایزه روزانه"
+label_settings = SubResource("LabelSettings_title")
+horizontal_alignment = 1
+
+[node name="DayLabel" type="Label" parent="DailyRewardPopup/PopupPanel/Content"]
+layout_mode = 2
+text = "روز 1"
+label_settings = SubResource("LabelSettings_button")
+horizontal_alignment = 1
+
+[node name="RewardGrid" type="GridContainer" parent="DailyRewardPopup/PopupPanel/Content"]
+layout_mode = 2
+size_flags_horizontal = 4
+columns = 7
+
+[node name="ClaimButton" type="Button" parent="DailyRewardPopup/PopupPanel/Content"]
+custom_minimum_size = Vector2(200, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/normal = SubResource("StyleBox_button_normal")
+text = "دریافت جایزه"
+
+[node name="CloseButton" type="Button" parent="DailyRewardPopup/PopupPanel/Content"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "بستن"
+
+[node name="SettingsPopup" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Overlay" type="ColorRect" parent="SettingsPopup"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.7)
+
+[node name="PopupPanel" type="PanelContainer" parent="SettingsPopup"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -180.0
+offset_top = -220.0
+offset_right = 180.0
+offset_bottom = 220.0
+theme_override_styles/panel = SubResource("StyleBox_panel")
+
+[node name="Content" type="VBoxContainer" parent="SettingsPopup/PopupPanel"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Title" type="Label" parent="SettingsPopup/PopupPanel/Content"]
+layout_mode = 2
+text = "⚙️ تنظیمات"
+label_settings = SubResource("LabelSettings_title")
+horizontal_alignment = 1
+
+[node name="MusicContainer" type="HBoxContainer" parent="SettingsPopup/PopupPanel/Content"]
+layout_mode = 2
+
+[node name="MusicLabel" type="Label" parent="SettingsPopup/PopupPanel/Content/MusicContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "🎵 موسیقی"
+label_settings = SubResource("LabelSettings_small")
+
+[node name="MusicSlider" type="HSlider" parent="SettingsPopup/PopupPanel/Content/MusicContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+max_value = 1.0
+step = 0.1
+value = 0.7
+
+[node name="SFXContainer" type="HBoxContainer" parent="SettingsPopup/PopupPanel/Content"]
+layout_mode = 2
+
+[node name="SFXLabel" type="Label" parent="SettingsPopup/PopupPanel/Content/SFXContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "🔊 افکت‌ها"
+label_settings = SubResource("LabelSettings_small")
+
+[node name="SFXSlider" type="HSlider" parent="SettingsPopup/PopupPanel/Content/SFXContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+max_value = 1.0
+step = 0.1
+value = 1.0
+
+[node name="VibrationContainer" type="HBoxContainer" parent="SettingsPopup/PopupPanel/Content"]
+layout_mode = 2
+
+[node name="VibrationLabel" type="Label" parent="SettingsPopup/PopupPanel/Content/VibrationContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "📳 لرزش"
+label_settings = SubResource("LabelSettings_small")
+
+[node name="VibrationToggle" type="CheckButton" parent="SettingsPopup/PopupPanel/Content/VibrationContainer"]
+layout_mode = 2
+button_pressed = true
+
+[node name="ThemeContainer" type="VBoxContainer" parent="SettingsPopup/PopupPanel/Content"]
+layout_mode = 2
+
+[node name="ThemeLabel" type="Label" parent="SettingsPopup/PopupPanel/Content/ThemeContainer"]
+layout_mode = 2
+text = "🎨 تم"
+label_settings = SubResource("LabelSettings_small")
+
+[node name="ThemeButtons" type="HBoxContainer" parent="SettingsPopup/PopupPanel/Content/ThemeContainer"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 10
+
+[node name="CloseButton" type="Button" parent="SettingsPopup/PopupPanel/Content"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBox_secondary_button")
+text = "بستن"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
